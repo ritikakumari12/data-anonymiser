@@ -6,6 +6,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const cors = require('cors');
 
 var indexRouter = require('./routes/index');
 
@@ -23,6 +24,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
+app.use(cors());              
+app.use(express.json());
+
 // S3 route
 const s3Router = require('./routes/s3');
 app.use('/api/s3', s3Router);
@@ -30,6 +34,10 @@ app.use('/api/s3', s3Router);
 // Upload route
 const uploadRouter = require('./routes/upload');
 app.use('/api/upload', uploadRouter);
+
+// Crypt route
+const cryptRouter = require('./routes/crypt');
+app.use('/api/crypt', cryptRouter);
 
 // Swagger setup
 const swaggerUi = require('swagger-ui-express');
@@ -41,6 +49,7 @@ const swaggerOptions = {
       title: 'Data Anonymiser API',
       version: '1.0.0',
     },
+    servers: [{ url: 'http://localhost:3000' }],
   },
   apis: ['./routes/*.js'],
 };
